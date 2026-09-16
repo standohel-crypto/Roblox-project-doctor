@@ -1,0 +1,10 @@
+{
+    "name": "project-doctor",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "express": "^5.2.1",
+        "luau-lsp": "^1.0.0"
+    }
+}
