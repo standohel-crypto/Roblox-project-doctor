@@ -1,0 +1,10 @@
+<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Статистика · Project Doctor</title><link rel="stylesheet" href="/admin/style.css">
+<main><header><div><p class="eyebrow">PROJECT DOCTOR / ТОЛЬКО ДЛЯ ВЛАДЕЛЬЦА</p><h1>Как пользуются сайтом</h1></div><a href="/page">Открыть сайт ↗</a></header>
+<div class="toolbar"><label>Период <select id="days"><option value="1">Сегодня</option><option value="7" selected>7 дней</option><option value="30">30 дней</option></select></label><button id="refresh">Обновить</button><span id="updated"></span></div><p id="status" role="status">Загружаем статистику…</p>
+<section id="content" hidden><div id="metrics" class="metrics"></div>
+<p class="hint">Посетители — уникальные браузеры, включая твой. Несколько вкладок одного браузера считаются один раз. Другой браузер или инкогнито — отдельный посетитель. Это приблизительный счётчик, а не число людей или подписчиков Telegram. Все дни и даты — по Алматы (UTC+5).</p>
+<section><h2>Проверки кода</h2><p>Один запуск с галочкой ИИ создаёт два запроса: Luau и ИИ. «Завершено» — результат получен; в самом коде могут быть ошибки. Прерванные включают запросы без результата более двух минут.</p><div id="runs" class="scroll"></div></section>
+<section><h2>Какие советы помогли</h2><p>Количество голосов, а не пользователей. Повторные проверки могут приносить новые голоса.</p><div id="rules" class="scroll"></div></section>
+<section><h2>Посещения по дням</h2><div id="daily" class="scroll"></div></section>
+<section><h2>Последние отзывы</h2><p>До 100 последних голосов за выбранный период. Исходный код не сохраняется.</p><div id="recent" class="scroll"></div></section>
+<p class="hint">Учёт проверок начинается после установки обновления. Старые анализы восстановить нельзя. При сбое базы новые события статистики могут не учитываться; сайт не подменяет отсутствующие данные нулями.</p></section></main><script src="/admin/app.js" defer></script></html>
