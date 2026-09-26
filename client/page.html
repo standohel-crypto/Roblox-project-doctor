@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roblox Project Doctor — проверка скриптов Roblox</title>
+  <meta name="description" content="Проверь скрипт Luau для Roblox: ошибки синтаксиса и типов, объяснения на русском и дополнительный разбор с ИИ. Узнай причину ошибки и способы исправления.">
+  <link rel="canonical" href="https://roblox-project-doctor.onrender.com/page/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Roblox Project Doctor — проверка скриптов Roblox">
+  <meta property="og:description" content="Проверка Luau, объяснения ошибок на русском и дополнительный разбор с ИИ.">
+  <meta property="og:url" content="https://roblox-project-doctor.onrender.com/page/">
+  <link rel="stylesheet" href="/style.css">
+  <meta name="google-site-verification" content="4VWg2xXbjnrRJl4ihbq4WDIRguMjDX2FkbduA97WQgg" />
+  <script src="/form.js" defer></script>
+</head>
+<body>
+  
+  <header class="header">
+    <div class="header-inner">
+      <a class="brand" href="/page/">
+        <span class="brand-icon" aria-hidden="true">+</span>
+        <span>Roblox <strong>Project Doctor</strong></span>
+      </a>
+      <div class="controls">
+        <button id="aboutButton" type="button" data-i18n="about">
+          Что проверяется
+        </button>
+        <label>
+          <span class="visually-hidden" data-i18n="language">Язык</span>
+          <select id="languageSelect">
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <label>
+          <span class="visually-hidden" data-i18n="theme">Тема</span>
+          <select id="themeSelect">
+            <option value="dark" data-i18n="dark">Тёмная тема</option>
+            <option value="light" data-i18n="light">Светлая тема</option>
+          </select>
+        </label>
+      </div>
+      <span
+          id="visitorStats"
+          class="badge"
+          title="Приблизительное количество уникальных браузеров"
+      >
+          Онлайн: — · Сегодня: —
+      </span>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <span class="eyebrow">LUAU · ROBLOX</span>
+      <h1 data-i18n="heading">Проверка скриптов Roblox на ошибки</h1>
+      <p data-i18n="subtitle">Roblox Project Doctor проверяет код Luau и объясняет знакомые ошибки на русском. Дополнительно можно включить разбор с ИИ.</p>
+    </div>
+
+    <div class="workspace">
+      <section class="panel editor" aria-labelledby="editorTitle">
+        <div class="panel-head">
+          <h2 id="editorTitle" data-i18n="code">Твой код</h2>
+          <span class="badge">input.luau</span>
+        </div>
+        <form id="userForm">
+          <label for="codeInput" class="visually-hidden" data-i18n="code">
+            Твой код
+          </label>
+          <textarea 
+            id="codeInput" 
+            spellcheck="false" 
+            autocapitalize="off" 
+            autocomplete="off" 
+            wrap="off" 
+            placeholder="--!strict&#10;local coins: number = &quot;hello&quot;&#10;print(coins)"
+          ></textarea>
+          <div class="editor-footer">
+            <span id="lineCount"></span>
+            <button id="clearButton" type="button" data-i18n="clear">
+              Очистить
+            </button>
+          </div>
+          <div class="submit-area">
+            <button class="primary" id="analyzeButton" type="submit" data-i18n="analyze">
+              Проверить код
+            </button>
+            <p class="muted small" data-i18n="waitHint">
+              Проверка может занять несколько секунд.
+            </p>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel results" aria-labelledby="resultsTitle">
+        <div class="panel-head">
+          <h2 id="resultsTitle" data-i18n="results">Результаты анализа</h2>
+          <span id="elapsed" class="muted small"></span>
+        </div>
+        <p id="analysisResult" role="status" aria-live="polite"></p>
+        <p id="staleNotice" class="notice" hidden data-i18n="stale">
+          Код изменён. Запусти проверку ещё раз.
+        </p>
+        <div id="issuesList"></div>
+      </section>
+    </div>
+
+    <section class="guide panel" aria-labelledby="guideTitle">
+      <h2 id="guideTitle" data-i18n="guideTitle">Как проверить скрипт Roblox</h2>
+      <p data-i18n="guideIntro">Вставь код Luau в поле выше и нажми «Проверить код». В результатах появятся найденные проблемы и номера строк. Для знакомых сообщений доступны перевод и советы; оригинал анализатора можно раскрыть отдельно.</p>
+      <h2 data-i18n="exampleTitle">Пример: число записано как текст</h2>
+      <pre><code>--!strict
+local coins: number = "100"
+print(coins)</code></pre>
+      <p data-i18n="exampleExplain">Здесь coins объявлена числом, но получает строку «100». Проверка типов обнаружит несовпадение. Если нужны монеты как число, убери кавычки: local coins: number = 100.</p>
+      <h2 data-i18n="checksTitle">Что проверяет обычный анализ</h2>
+      <p data-i18n="checksText">Luau LSP с определениями Roblox проверяет синтаксис и типы. Project Doctor показывает диагностику и объясняет знакомые сообщения. Такая проверка доступна и в Roblox Studio; здесь можно разобрать отдельный скрипт в браузере.</p>
+      <h2 data-i18n="aiTitle">Когда нужен ИИ</h2>
+      <p data-i18n="aiText">Опция «Включить ИИ при анализе» добавляет разбор возможных логических проблем и предложения исправлений. Код отправляется сервису Groq. ИИ может ошибаться или быть временно недоступен; проверяй предложенные изменения в Roblox Studio.</p>
+      <h2 data-i18n="limitsTitle">Почему скрипт может не работать без ошибок?</h2>
+      <p data-i18n="limitsText">Анализатор не запускает игру и не видит все объекты и связанные скрипты проекта. Неверное условие, повторная выдача награды или отсутствующий объект могут требовать проверки во время игры. Отсутствие диагностик не гарантирует правильную работу скрипта.</p>
+    </section>
+  </main>
+
+  <footer data-i18n="footer">
+    Project Doctor · Помощник для проверки Luau
+  </footer>
+
+  <dialog id="aboutDialog" aria-labelledby="aboutTitle">
+    <h2 id="aboutTitle" data-i18n="about">Что проверяется</h2>
+    <p data-i18n="aboutText">
+      Проверяем синтаксис и типы с помощью Luau LSP и определений Roblox. 
+      Проверка не запускает игру и не знает объекты твоего проекта. 
+      Она не гарантирует отсутствие логических ошибок или уязвимостей.
+    </p>
+    <p data-i18n="translationInfo">
+      Перевод и советы доступны для знакомых сообщений. 
+      Для остальных сохраняется оригинал анализатора.
+    </p>
+    <p data-i18n="feedbackInfo">
+      Отзывы сохраняются на сервере: идентификатор правила, Да/Нет и язык. 
+      Исходный код в отзыв не входит.
+    </p>
+    <p data-i18n="version">
+      Интерфейс: MVP 0.2. Версия анализатора зависит от установленного luau-lsp.
+    </p>
+    <form method="dialog">
+      <button class="primary" data-i18n="close">Понятно</button>
+    </form>
+  </dialog>
+
+</body>
+</html>
