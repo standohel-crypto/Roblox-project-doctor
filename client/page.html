@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="/style.css">
   <meta name="google-site-verification" content="4VWg2xXbjnrRJl4ihbq4WDIRguMjDX2FkbduA97WQgg" />
   <script src="/form.js" defer></script>
+  <link rel="stylesheet" href="/accounts.css">
+  <script src="/accounts.js" defer></script>
 </head>
 <body>
   
@@ -23,6 +25,8 @@
         <span>Roblox <strong>Project Doctor</strong></span>
       </a>
       <div class="controls">
+        <a href="#pricing" id="pricingLink">Тарифы</a>
+        <button id="accountButton" type="button">Войти</button>
         <button id="aboutButton" type="button" data-i18n="about">
           Что проверяется
         </button>
@@ -121,6 +125,12 @@ print(coins)</code></pre>
       <h2 data-i18n="limitsTitle">Почему скрипт может не работать без ошибок?</h2>
       <p data-i18n="limitsText">Анализатор не запускает игру и не видит все объекты и связанные скрипты проекта. Неверное условие, повторная выдача награды или отсутствующий объект могут требовать проверки во время игры. Отсутствие диагностик не гарантирует правильную работу скрипта.</p>
     </section>
+    <section id="pricing" class="panel pricing" aria-labelledby="pricingTitle">
+      <h2 id="pricingTitle">Тарифы</h2>
+      <p id="pricingIntro"></p>
+      <div id="planCards" class="plan-grid"></div>
+      <p id="pricingNote" class="muted"></p>
+    </section>
   </main>
 
   <footer data-i18n="footer">
@@ -150,5 +160,19 @@ print(coins)</code></pre>
     </form>
   </dialog>
 
+<dialog id="accountDialog" aria-labelledby="accountTitle">
+ <button id="accountClose" class="account-close" type="button" aria-label="Закрыть">×</button>
+ <h2 id="accountTitle">Аккаунт</h2>
+ <div id="signedIn" hidden><p id="accountIdentity"></p><p id="accountInfo"></p><button id="logoutButton" type="button">Выйти</button></div>
+ <form id="accountForm">
+  <label><span id="usernameLabel">Логин</span><input id="accountUsername" name="username" autocomplete="username" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" required></label>
+  <p id="usernameHint" class="muted small"></p>
+  <label><span id="passwordLabel">Пароль</span><input id="accountPassword" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="256" required></label>
+  <p id="passwordHint" class="muted small"></p>
+  <button id="accountSubmit" class="primary" type="submit">Войти</button>
+  <button id="accountSwitch" type="button">Создать аккаунт</button>
+ </form>
+ <p id="accountStatus" role="status" aria-live="polite"></p>
+</dialog>
 </body>
 </html>

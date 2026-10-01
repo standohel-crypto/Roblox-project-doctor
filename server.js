@@ -4,9 +4,12 @@ import path from 'node:path';
 import { analyzeWithLuau } from './analyzer/luau.js';
 import { installAnalytics } from './analytics.js';
 
+import { installAuth } from './auth.js';
+
 const app = express();
 const projectPath = import.meta.dirname;
 app.use(express.json({ limit: '320kb' }));
+installAuth(app);
 installAnalytics(app);
 installReviewRoute(app);
 // Keep one public page URL; run before static files to avoid duplicate HTML URLs.
