@@ -8,6 +8,27 @@ function readSetting(key, fallback) { try { return localStorage.getItem(key) || 
 function saveSetting(key, value) { try { localStorage.setItem(key, value); } catch { /* Settings remain usable for this visit. */ } }
 let language = readSetting('doctor-language','ru') === 'en' ? 'en' : 'ru';
 let theme = readSetting('doctor-theme','light') === 'light' ? 'light' : 'dark';
+const themePresets={
+ default:{bg:'#f6f6f2',panel:'#ffffff',field:'#f1f3ef',text:'#25342e',muted:'#78837c',border:'#e1e6df',accent:'#287d57',button:'#267b52',hover:'#edf2ed'},
+ ocean:{bg:'#edf6fa',panel:'#ffffff',field:'#e1f0f4',text:'#17313b',muted:'#66818a',border:'#cfe3e8',accent:'#167a93',button:'#167a93',hover:'#e4f3f6'},
+ sunset:{bg:'#fff4ec',panel:'#fffdfb',field:'#fbe7d9',text:'#472c28',muted:'#956e61',border:'#efd6c8',accent:'#c45d3d',button:'#c45d3d',hover:'#fce8dc'},
+ mono:{bg:'#f0f1f2',panel:'#ffffff',field:'#e5e7e9',text:'#24272b',muted:'#73777d',border:'#d1d4d8',accent:'#4c5663',button:'#343b45',hover:'#e7e9eb'}
+};
+let themePreset=readSetting('doctor-theme-preset','default');
+if(!themePresets[themePreset]&&themePreset!=='custom')themePreset='default';
+function applyVisualSettings(){
+ const root=document.documentElement, preset=themePresets[themePreset];
+ const vars={bg:'bg',panel:'panel',field:'field',text:'text',muted:'muted',border:'border',accent:'accent',button:'button',hover:'hover'};
+ if(preset && !(theme==='dark'&&themePreset==='default'))for(const [key,value] of Object.entries(preset))root.style.setProperty('--'+vars[key],value);
+ if(theme==='dark'&&themePreset==='default')for(const key of Object.values(vars))root.style.removeProperty('--'+key);
+ const accent=readSetting('doctor-accent',preset?.accent||'#287d57'), background=readSetting('doctor-background',preset?.bg||'#f6f6f2');
+ if(themePreset==='custom'){root.style.setProperty('--accent',accent);root.style.setProperty('--button',accent);root.style.setProperty('--bg',background);}
+ root.style.setProperty('--custom-bg-opacity',String(Number(readSetting('doctor-bg-opacity','18'))/100));
+ root.style.setProperty('--custom-bg-blur',readSetting('doctor-bg-blur','0')+'px');
+ root.style.setProperty('--panel-opacity',readSetting('doctor-panel-opacity','100')+'%');
+ const image=readSetting('doctor-background-image','');root.style.setProperty('--custom-bg-image',image?`url("${image}")`:'none');
+}
+applyVisualSettings();
 let busy = false, result = null, analyzedCode = '', elapsed = null, status = 'idle';
 let feedback = new Map();
 let aiResult = null;
@@ -95,7 +116,21 @@ function translate() {
   renderStatus(); renderIssues();
 }
 $('languageSelect').addEventListener('change',()=>{language=$('languageSelect').value;saveSetting('doctor-language',language);translate();});
-$('themeSelect').addEventListener('change',()=>{theme=$('themeSelect').value;saveSetting('doctor-theme',theme);translate();});
+$('themeSelect').addEventListener('change',()=>{theme=$('themeSelect').value;saveSetting('doctor-theme',theme);applyVisualSettings();translate();});
+$('settingsButton').addEventListener('click',()=>{
+  $('themePreset').value=themePreset;$('accentColor').value=readSetting('doctor-accent',themePresets.default.accent);$('backgroundColor').value=readSetting('doctor-background',themePresets.default.bg);
+  $('backgroundOpacity').value=readSetting('doctor-bg-opacity','18');$('backgroundBlur').value=readSetting('doctor-bg-blur','0');$('panelOpacity').value=readSetting('doctor-panel-opacity','100');
+  $('backgroundName').textContent=readSetting('doctor-background-image','')?'Своя картинка загружена':'Картинка не выбрана';updateSettingOutputs();$('settingsDialog').showModal();
+});
+$('settingsClose').onclick=()=>$('settingsDialog').close();$('settingsDone').onclick=()=>$('settingsDialog').close();
+function updateSettingOutputs(){ $('backgroundOpacityValue').textContent=$('backgroundOpacity').value+'%';$('backgroundBlurValue').textContent=$('backgroundBlur').value+'px';$('panelOpacityValue').textContent=$('panelOpacity').value+'%'; }
+$('themePreset').addEventListener('change',()=>{themePreset=$('themePreset').value;saveSetting('doctor-theme-preset',themePreset);applyVisualSettings();if(themePresets[themePreset]){ $('accentColor').value=themePresets[themePreset].accent;$('backgroundColor').value=themePresets[themePreset].bg; } });
+$('accentColor').addEventListener('input',()=>{themePreset='custom';$('themePreset').value='custom';saveSetting('doctor-theme-preset','custom');saveSetting('doctor-accent',$('accentColor').value);applyVisualSettings();});
+$('backgroundColor').addEventListener('input',()=>{themePreset='custom';$('themePreset').value='custom';saveSetting('doctor-theme-preset','custom');saveSetting('doctor-background',$('backgroundColor').value);applyVisualSettings();});
+for(const id of ['backgroundOpacity','backgroundBlur','panelOpacity'])$(id).addEventListener('input',()=>{const key={backgroundOpacity:'doctor-bg-opacity',backgroundBlur:'doctor-bg-blur',panelOpacity:'doctor-panel-opacity'}[id];saveSetting(key,$(id).value);applyVisualSettings();updateSettingOutputs();});
+$('backgroundFile').addEventListener('change',()=>{const file=$('backgroundFile').files[0];if(!file)return;if(file.size>2*1024*1024){$('backgroundName').textContent='Файл больше 2 МБ';return;}const reader=new FileReader();reader.onload=()=>{saveSetting('doctor-background-image',reader.result);$('backgroundName').textContent=file.name;applyVisualSettings();};reader.readAsDataURL(file);});
+$('clearBackground').addEventListener('click',()=>{saveSetting('doctor-background-image','');$('backgroundFile').value='';$('backgroundName').textContent='Картинка не выбрана';applyVisualSettings();});
+$('resetSettings').addEventListener('click',()=>{for(const key of ['doctor-theme-preset','doctor-accent','doctor-background','doctor-bg-opacity','doctor-bg-blur','doctor-panel-opacity','doctor-background-image'])try{localStorage.removeItem(key);}catch{}themePreset='default';applyVisualSettings();$('themePreset').value='default';$('accentColor').value=themePresets.default.accent;$('backgroundColor').value=themePresets.default.bg;$('backgroundOpacity').value=18;$('backgroundBlur').value=0;$('panelOpacity').value=100;$('backgroundName').textContent='Картинка не выбрана';updateSettingOutputs();});
 $('aboutButton').addEventListener('click',()=>$('aboutDialog').showModal());
 $('codeInput').addEventListener('input',()=>{renderStatus();renderIssues();});
 $('clearButton').addEventListener('click',()=>{if(busy)return;$('codeInput').value='';result=null;aiResult=null;elapsed=null;status='idle';feedback=new Map();renderStatus();renderIssues();$('codeInput').focus();});
