@@ -1,5 +1,5 @@
 (() => {
- const $=id=>document.getElementById(id);let user=null,register=false,busy=false;
+ const $=id=>document.getElementById(id);let user=null,register=false,busy=false,googleEnabled=false;
  const ru=()=>document.documentElement.lang!=='en';
  const t=(a,b)=>ru()?a:b;
  async function request(url,body){const response=await fetch('/api/auth/'+url,{method:body?'POST':'GET',credentials:'same-origin',headers:body?{'Content-Type':'application/json'}:{},body:body?JSON.stringify(body):undefined,signal:AbortSignal.timeout(15000)});const result=await response.json();if(!response.ok)throw new Error(result.message||t('Ошибка запроса','Request failed'));return result;}
@@ -10,10 +10,16 @@
   const plans=[['Luau',0,0], [t('Старт','Start'),490,20],[t('Разработчик','Developer'),990,50],[t('Проект','Project'),1790,100]];
   $('planCards').replaceChildren();
   for(const [name,price,count]of plans){const card=document.createElement('article');card.className='plan-card';const h=document.createElement('h3');h.textContent=name;const p=document.createElement('p');p.className='plan-price';p.textContent=price.toLocaleString(ru()?'ru-RU':'en-US')+' ₸';const desc=document.createElement('p');desc.textContent=count?t(`${count} ИИ-проверок: поиск возможных логических проблем, объяснения и предложения исправлений.`,`${count} AI reviews: potential logic issues, explanations and suggested fixes.`):t('Синтаксис и типы Luau, объяснения знакомых ошибок. Без аккаунта. До 50 КБ на запрос.','Luau syntax and types, explanations of known errors. No account required. Up to 50 KB per request.');card.append(h,p,desc);if(count){const note=document.createElement('p');note.textContent=t('Покупка пока недоступна','Purchase not available yet');card.append(note);}else{const a=document.createElement('a');a.href='#codeInput';a.textContent=t('Проверить код','Check code');card.append(a);}$('planCards').append(card);}
-  $('accountButton').textContent=user?user.username:t('Войти','Sign in');
+  $('accountButton').textContent=user?(user.display_name||user.username):t('Войти','Sign in');
   $('accountTitle').textContent=user?t('Мой аккаунт','My account'):register?t('Регистрация','Sign up'):t('Вход','Sign in');
-  $('accountForm').hidden=!!user;$('signedIn').hidden=!user;
-  $('accountIdentity').textContent=user?user.username:'';
+  $('accountForm').hidden=!!user;$('signedOut').hidden=!!user;$('signedIn').hidden=!user;
+  $('accountIdentity').textContent=user?(user.display_name||user.username):'';
+  $('profileAvatar').textContent=user?(user.display_name||user.username).slice(0,1).toUpperCase():'P';
+  $('authSubtitle').hidden=!!user;
+  $('authSubtitle').textContent=t('Твоё рабочее пространство начинается здесь.','Your workspace starts here.');
+  $('googleButtonText').textContent=t('Продолжить с Google','Continue with Google');
+  $('googleButton').disabled=!googleEnabled||busy;
+  $('googleStatus').textContent=googleEnabled?'':t('Вход через Google пока недоступен. Можно войти по логину.','Google sign-in is not available yet. You can use your username.');
   $('accountInfo').textContent=t('Аккаунт создан. Покупки и баланс проверок ещё не подключены.','Your account is ready. Purchases and check balances are not connected yet.');
   $('logoutButton').textContent=t('Выйти','Sign out');$('usernameLabel').textContent=t('Логин','Username');$('passwordLabel').textContent=t('Пароль','Password');
   $('usernameHint').textContent=t('3–24 латинских буквы, цифры или _.','3–24 Latin letters, digits or _.');
@@ -23,7 +29,7 @@
   $('accountPassword').autocomplete=register?'new-password':'current-password';
   $('accountClose').ariaLabel=t('Закрыть','Close');
  }
- function lock(value){busy=value;for(const el of $('accountForm').elements)el.disabled=value;$('logoutButton').disabled=value;}
+ function lock(value){busy=value;for(const el of $('accountForm').elements)el.disabled=value;$('logoutButton').disabled=value;$('googleButton').disabled=value||!googleEnabled;}
  $('accountButton').onclick=()=>{$('accountStatus').textContent='';draw();$('accountDialog').showModal();};
  $('accountClose').onclick=()=>$('accountDialog').close();
  $('accountDialog').addEventListener('close',()=>{$('accountPassword').value='';});
@@ -31,5 +37,9 @@
  $('accountForm').onsubmit=async e=>{e.preventDefault();if(busy)return;lock(true);$('accountStatus').textContent=t('Подожди…','Please wait…');try{const data=await request(register?'register':'login',{username:$('accountUsername').value,password:$('accountPassword').value});user=data.user;$('accountPassword').value='';$('accountStatus').textContent='';draw();}catch(e){$('accountStatus').textContent=e.name==='TimeoutError'?t('Время ожидания истекло. Попробуй войти.','Timed out. Try signing in.'):e.message;}finally{lock(false);}};
  $('logoutButton').onclick=async()=>{if(busy)return;lock(true);try{await request('logout',{});user=null;draw();$('accountStatus').textContent='';}catch(e){$('accountStatus').textContent=e.message;}finally{lock(false);}};
  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+ $('googleButton').onclick=async()=>{if(busy||!googleEnabled)return;lock(true);$('accountStatus').textContent=t('Открываем Google…','Opening Google…');try{const data=await request('google/start',{});location.assign(data.url);}catch(e){$('accountStatus').textContent=e.message;lock(false);}};
+ const authResult=new URLSearchParams(location.search).get('auth');
+ if(authResult){const url=new URL(location.href);url.searchParams.delete('auth');history.replaceState(null,'',url);if(authResult==='google_error'){$('accountStatus').textContent=t('Не удалось войти через Google. Попробуй ещё раз или войди по логину.','Could not sign in with Google. Retry or use your username.');$('accountDialog').showModal();}}
+ request('config').then(data=>{googleEnabled=data.googleEnabled===true;draw();}).catch(()=>{});
  draw();request('me').then(data=>{user=data.user;draw();}).catch(()=>{});
 })();

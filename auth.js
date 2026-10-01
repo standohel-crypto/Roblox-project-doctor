@@ -7,7 +7,7 @@ const secure = process.env.NODE_ENV === 'production' || !!process.env.RENDER;
 const cookieName = secure ? '__Host-doctor_session' : 'doctor_session';
 const cookieOptions = { httpOnly:true, secure, sameSite:'lax', path:'/' };
 let ready;
-async function db() {
+export async function authDatabase() {
  const pool = await database();
  if(!ready) ready = pool.query(`CREATE TABLE IF NOT EXISTS doctor_users (
  id bigserial PRIMARY KEY, username varchar(24) UNIQUE NOT NULL, password_hash text NOT NULL,
@@ -15,7 +15,8 @@ async function db() {
  CREATE TABLE IF NOT EXISTS doctor_sessions (
  token_hash char(64) PRIMARY KEY, user_id bigint NOT NULL REFERENCES doctor_users(id) ON DELETE CASCADE,
  expires_at timestamptz NOT NULL);
- CREATE INDEX IF NOT EXISTS doctor_sessions_expiry ON doctor_sessions(expires_at);`).catch(e=>{ready=null;throw e;});
+ CREATE INDEX IF NOT EXISTS doctor_sessions_expiry ON doctor_sessions(expires_at);
+ ALTER TABLE doctor_users ADD COLUMN IF NOT EXISTS display_name varchar(100);`).catch(e=>{ready=null;throw e;});
  await ready; return pool;
 }
 export async function passwordHash(password) {
@@ -37,7 +38,9 @@ function token(req) {
 export function sameOrigin(req,res,next) {
  let allowed;
  try { allowed=process.env.PUBLIC_URL ? new URL(process.env.PUBLIC_URL).origin : `${secure?'https':'http'}://${req.get('host')}`; } catch { return res.status(503).json({message:'Проверь PUBLIC_URL на сервере.'}); }
- if(req.get('origin')!==allowed)return res.status(403).json({message:'Запрос с другого сайта запрещён.'});
+ let origin=req.get('origin');
+ if(!origin){try{origin=new URL(req.get('referer')||'').origin;}catch{origin=null;}}
+ if(origin!==allowed)return res.status(403).json({message:'Запрос с другого сайта запрещён.'});
  next();
 }
 // Single-process throttling. Behind a proxy this deliberately uses the actual peer IP,
@@ -53,11 +56,11 @@ function rateLimit(req,res,next) {
 }
 async function current(req) {
  const value=token(req);if(!value)return null;
- const pool=await db();
- const result=await pool.query('SELECT u.id,u.username FROM doctor_sessions s JOIN doctor_users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>now()',[hash(value)]);
+ const pool=await authDatabase();
+ const result=await pool.query('SELECT u.id,u.username,u.display_name FROM doctor_sessions s JOIN doctor_users u ON u.id=s.user_id WHERE s.token_hash=$1 AND s.expires_at>now()',[hash(value)]);
  return result.rows[0]||null;
 }
-async function session(req,res,userId,pool) {
+export async function createSession(req,res,userId,pool) {
  const value=randomBytes(32).toString('hex');
  await pool.query("INSERT INTO doctor_sessions(token_hash,user_id,expires_at) VALUES($1,$2,now()+interval '7 days')",[hash(value),userId]);
  const old=token(req);if(old)await pool.query('DELETE FROM doctor_sessions WHERE token_hash=$1',[hash(old)]);
@@ -74,7 +77,7 @@ export function installAuth(app) {
   if(!/^[a-z0-9_]{3,24}$/.test(username)||typeof password!=='string'||password.length<12||Buffer.byteLength(password)>256)return res.status(400).json({message:'Логин: 3–24 латинских буквы, цифры или _. Пароль: от 12 символов, максимум 256 байт.'});
   active++;
   try {
-   const pool=await db();let user;
+   const pool=await authDatabase();let user;
    if(action==='register') {
     const encoded=await passwordHash(password);
     try {
@@ -90,11 +93,11 @@ export function installAuth(app) {
     if(!match||!found.rows[0])return res.status(401).json({message:'Неверный логин или пароль.'});
     user={id:found.rows[0].id,username:found.rows[0].username};
    }
-   await session(req,res,user.id,pool);res.json({user});
+   await createSession(req,res,user.id,pool);res.json({user});
   }finally{active--;}
  }));
  app.post('/api/auth/logout',sameOrigin,endpoint(async(req,res)=>{
-  const value=token(req);if(value){const pool=await db();await pool.query('DELETE FROM doctor_sessions WHERE token_hash=$1',[hash(value)]);}
+  const value=token(req);if(value){const pool=await authDatabase();await pool.query('DELETE FROM doctor_sessions WHERE token_hash=$1',[hash(value)]);}
   res.clearCookie(cookieName,cookieOptions);res.json({ok:true});
  }));
 }

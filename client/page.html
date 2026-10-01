@@ -1,178 +1,60 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="dark">
+<html lang="ru" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Roblox Project Doctor — проверка скриптов Roblox</title>
-  <meta name="description" content="Проверь скрипт Luau для Roblox: ошибки синтаксиса и типов, объяснения на русском и дополнительный разбор с ИИ. Узнай причину ошибки и способы исправления.">
-  <link rel="canonical" href="https://roblox-project-doctor.onrender.com/page/">
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Roblox Project Doctor — проверка скриптов Roblox">
-  <meta property="og:description" content="Проверка Luau, объяснения ошибок на русском и дополнительный разбор с ИИ.">
-  <meta property="og:url" content="https://roblox-project-doctor.onrender.com/page/">
-  <link rel="stylesheet" href="/style.css">
-  <meta name="google-site-verification" content="4VWg2xXbjnrRJl4ihbq4WDIRguMjDX2FkbduA97WQgg" />
-  <script src="/form.js" defer></script>
-  <link rel="stylesheet" href="/accounts.css">
-  <script src="/accounts.js" defer></script>
+ <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <title>Project Doctor — рабочее пространство Luau</title>
+ <meta name="description" content="Проверка скриптов Roblox: редактор Luau, диагностика ошибок, понятные объяснения и дополнительный разбор с ИИ.">
+ <link rel="canonical" href="https://roblox-project-doctor.onrender.com/page/">
+ <meta name="google-site-verification" content="4VWg2xXbjnrRJl4ihbq4WDIRguMjDX2FkbduA97WQgg">
+ <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/accounts.css">
+ <script src="/form.js" defer></script><script src="/accounts.js" defer></script><script src="/workspace.js" defer></script>
 </head>
 <body>
-  
-  <header class="header">
-    <div class="header-inner">
-      <a class="brand" href="/page/">
-        <span class="brand-icon" aria-hidden="true">+</span>
-        <span>Roblox <strong>Project Doctor</strong></span>
-      </a>
-      <div class="controls">
-        <a href="#pricing" id="pricingLink">Тарифы</a>
-        <button id="accountButton" type="button">Войти</button>
-        <button id="aboutButton" type="button" data-i18n="about">
-          Что проверяется
-        </button>
-        <label>
-          <span class="visually-hidden" data-i18n="language">Язык</span>
-          <select id="languageSelect">
-            <option value="ru">Русский</option>
-            <option value="en">English</option>
-          </select>
-        </label>
-        <label>
-          <span class="visually-hidden" data-i18n="theme">Тема</span>
-          <select id="themeSelect">
-            <option value="dark" data-i18n="dark">Тёмная тема</option>
-            <option value="light" data-i18n="light">Светлая тема</option>
-          </select>
-        </label>
-      </div>
-      <span
-          id="visitorStats"
-          class="badge"
-          title="Приблизительное количество уникальных браузеров"
-      >
-          Онлайн: — · Сегодня: —
-      </span>
-    </div>
+ <aside class="sidebar">
+  <a class="brand" href="/page/" aria-label="Project Doctor"><span class="brand-icon">✳</span><span>Project<span class="brand-second">Doctor<span class="brand-dot">.</span></span></span></a>
+  <span class="nav-caption" data-ui="workspace">РАБОЧЕЕ ПРОСТРАНСТВО</span>
+  <nav class="side-nav" aria-label="Главная навигация">
+   <button type="button" class="nav-item active" id="editorNav"><span aria-hidden="true">⌘</span><span data-ui="analyzer">Анализатор</span><span class="nav-dot"></span></button>
+   <a class="nav-item" href="#pricing" id="pricingNav"><span aria-hidden="true">▱</span><span id="pricingLink">Тарифы</span></a>
+   <button type="button" class="nav-item" id="aboutButton"><span aria-hidden="true">ⓘ</span><span data-ui="guide">Как это работает</span></button>
+  </nav>
+  <div class="sidebar-bottom"><div class="beta-card"><span class="beta-label">PUBLIC BETA</span><strong data-ui="betaTitle">Меньше поиска.<br>Больше разработки.</strong><p data-ui="betaText">Начни с одного скрипта — без установки и настройки.</p></div><span class="sidebar-foot">Сделано для Roblox-разработчиков</span></div>
+ </aside>
+ <div class="app-shell">
+  <header class="topbar">
+   <div class="breadcrumb"><span class="breadcrumb-icon">⌘</span><span data-ui="project">Рабочее пространство</span><span class="slash">/</span><strong data-ui="analyzer">Анализатор</strong></div>
+   <div class="controls">
+    <label><span class="visually-hidden" data-i18n="language">Язык</span><select id="languageSelect"><option value="ru">RU</option><option value="en">EN</option></select></label>
+    <label><span class="visually-hidden" data-i18n="theme">Тема</span><select id="themeSelect"><option value="light" data-ui="lightOption">☀ Светлая</option><option value="dark" data-ui="darkOption">☾ Тёмная</option></select></label>
+    <button id="accountButton" class="account-button" type="button">Войти</button>
+   </div>
   </header>
-
   <main>
-    <div class="intro">
-      <span class="eyebrow">LUAU · ROBLOX</span>
-      <h1 data-i18n="heading">Проверка скриптов Roblox на ошибки</h1>
-      <p data-i18n="subtitle">Roblox Project Doctor проверяет код Luau и объясняет знакомые ошибки на русском. Дополнительно можно включить разбор с ИИ.</p>
-    </div>
-
-    <div class="workspace">
-      <section class="panel editor" aria-labelledby="editorTitle">
-        <div class="panel-head">
-          <h2 id="editorTitle" data-i18n="code">Твой код</h2>
-          <span class="badge">input.luau</span>
-        </div>
-        <form id="userForm">
-          <label for="codeInput" class="visually-hidden" data-i18n="code">
-            Твой код
-          </label>
-          <textarea 
-            id="codeInput" 
-            spellcheck="false" 
-            autocapitalize="off" 
-            autocomplete="off" 
-            wrap="off" 
-            placeholder="--!strict&#10;local coins: number = &quot;hello&quot;&#10;print(coins)"
-          ></textarea>
-          <div class="editor-footer">
-            <span id="lineCount"></span>
-            <button id="clearButton" type="button" data-i18n="clear">
-              Очистить
-            </button>
-          </div>
-          <div class="submit-area">
-            <button class="primary" id="analyzeButton" type="submit" data-i18n="analyze">
-              Проверить код
-            </button>
-            <p class="muted small" data-i18n="waitHint">
-              Проверка может занять несколько секунд.
-            </p>
-          </div>
-        </form>
+   <section id="editorView">
+    <div class="page-heading"><div><div class="eyebrow"><span></span> YOUR CODE, A LITTLE BETTER</div><h1 data-ui="title">Хороший код начинается здесь<span>.</span></h1><p data-ui="subtitle">Найди ошибку, пойми причину и возвращайся к своей игре.</p></div><span class="version-tag">LUAU WORKSPACE <b>01</b></span></div>
+    <div class="intro-strip"><span class="strip-icon">✦</span><p><strong data-ui="stripTitle">Твой второй взгляд на код.</strong> <span data-ui="stripText">Вставь скрипт или выбери пример. Проверка Luau бесплатна.</span></p><button id="exampleQuick" type="button" data-ui="tryExample">Попробовать пример ↗</button></div>
+    <div class="workbench" id="workbench">
+     <div class="workbench-toolbar"><div class="file-tab"><span class="luau-icon">L</span><span id="fileName">script.luau</span><span class="file-indicator" aria-hidden="true"></span></div><div class="file-actions"><label class="example-select"><span class="visually-hidden" data-ui="examples">Примеры</span><select id="exampleSelect"><option value="" data-ui="examples">Примеры</option><option value="types" data-ui="exTypes">Ошибка типа</option><option value="scope" data-ui="exScope">Область видимости</option><option value="events" data-ui="exEvents">События Roblox</option></select></label><button type="button" id="openFile" data-ui="open">Открыть</button><button type="button" id="saveFile" data-ui="save">Скачать</button><input type="file" id="filePicker" accept=".lua,.luau,.txt" hidden></div></div>
+     <div class="workspace">
+      <section class="editor" aria-labelledby="editorTitle">
+       <div class="panel-head editor-head"><h2 id="editorTitle"><span class="section-number">01</span> <span data-ui="source">Исходный код</span></h2><span class="editor-label">LUAU</span></div>
+       <form id="userForm">
+        <div class="code-shell"><pre id="lineNumbers" class="line-numbers" aria-hidden="true">1</pre><div class="code-layer"><pre id="codeHighlight" aria-hidden="true"></pre><label for="codeInput" class="visually-hidden" data-i18n="code">Твой код</label><textarea id="codeInput" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" placeholder="-- Вставь код Luau сюда&#10;-- или выбери пример сверху"></textarea></div></div>
+        <div class="editor-footer"><span id="lineCount">Строк: 1</span><span id="cursorPosition">Ln 1, Col 1</span><button id="clearButton" type="button" data-i18n="clear">Очистить</button></div>
+        <div class="analysis-options" id="analysisOptions"></div>
+        <div class="submit-area"><button class="primary run-button" id="analyzeButton" type="submit" data-i18n="analyze">Проверить код</button><span class="keyboard-hint">Ctrl / ⌘ + Enter</span></div>
+       </form>
       </section>
-
-      <section class="panel results" aria-labelledby="resultsTitle">
-        <div class="panel-head">
-          <h2 id="resultsTitle" data-i18n="results">Результаты анализа</h2>
-          <span id="elapsed" class="muted small"></span>
-        </div>
-        <p id="analysisResult" role="status" aria-live="polite"></p>
-        <p id="staleNotice" class="notice" hidden data-i18n="stale">
-          Код изменён. Запусти проверку ещё раз.
-        </p>
-        <div id="issuesList"></div>
-      </section>
+      <section class="results" aria-labelledby="resultsTitle"><div class="panel-head"><h2 id="resultsTitle"><span class="section-number">02</span> <span data-ui="diagnostics">Диагностика</span></h2><span class="results-badge" data-ui="live">Результаты</span></div><div class="results-scroll"><div class="result-status"><p id="analysisResult" role="status" aria-live="polite"></p><span id="elapsed" class="muted small"></span></div><div id="emptyResults" class="empty-results"><div class="empty-illustration"><span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="empty-glyph">✳</span><span class="floating-code">{ }</span><span class="floating-check">✓</span></div><span class="empty-kicker">READY WHEN YOU ARE</span><h3 data-ui="emptyTitle">Посмотрим, что внутри?</h3><p data-ui="emptyText">Запусти проверку — здесь появятся найденные проблемы и рекомендации.</p><div class="check-types"><span>✓ <span data-ui="syntax">Синтаксис</span></span><span>✓ <span data-ui="types">Типы</span></span><span>✦ <span data-ui="ai">ИИ-разбор</span></span></div></div><p id="staleNotice" class="notice" hidden data-i18n="stale">Код изменён. Запусти проверку ещё раз.</p><div id="issuesList"></div></div></section>
+     </div>
+     <div class="workbench-status"><span><i class="status-dot"></i> Luau LSP <span class="status-divider">/</span> Roblox definitions</span><span data-ui="limit">До 50 КБ · Код не запускается</span></div>
     </div>
-
-    <section class="guide panel" aria-labelledby="guideTitle">
-      <h2 id="guideTitle" data-i18n="guideTitle">Как проверить скрипт Roblox</h2>
-      <p data-i18n="guideIntro">Вставь код Luau в поле выше и нажми «Проверить код». В результатах появятся найденные проблемы и номера строк. Для знакомых сообщений доступны перевод и советы; оригинал анализатора можно раскрыть отдельно.</p>
-      <h2 data-i18n="exampleTitle">Пример: число записано как текст</h2>
-      <pre><code>--!strict
-local coins: number = "100"
-print(coins)</code></pre>
-      <p data-i18n="exampleExplain">Здесь coins объявлена числом, но получает строку «100». Проверка типов обнаружит несовпадение. Если нужны монеты как число, убери кавычки: local coins: number = 100.</p>
-      <h2 data-i18n="checksTitle">Что проверяет обычный анализ</h2>
-      <p data-i18n="checksText">Luau LSP с определениями Roblox проверяет синтаксис и типы. Project Doctor показывает диагностику и объясняет знакомые сообщения. Такая проверка доступна и в Roblox Studio; здесь можно разобрать отдельный скрипт в браузере.</p>
-      <h2 data-i18n="aiTitle">Когда нужен ИИ</h2>
-      <p data-i18n="aiText">Опция «Включить ИИ при анализе» добавляет разбор возможных логических проблем и предложения исправлений. Код отправляется сервису Groq. ИИ может ошибаться или быть временно недоступен; проверяй предложенные изменения в Roblox Studio.</p>
-      <h2 data-i18n="limitsTitle">Почему скрипт может не работать без ошибок?</h2>
-      <p data-i18n="limitsText">Анализатор не запускает игру и не видит все объекты и связанные скрипты проекта. Неверное условие, повторная выдача награды или отсутствующий объект могут требовать проверки во время игры. Отсутствие диагностик не гарантирует правильную работу скрипта.</p>
-    </section>
-    <section id="pricing" class="panel pricing" aria-labelledby="pricingTitle">
-      <h2 id="pricingTitle">Тарифы</h2>
-      <p id="pricingIntro"></p>
-      <div id="planCards" class="plan-grid"></div>
-      <p id="pricingNote" class="muted"></p>
-    </section>
+    <div class="under-workbench"><p data-ui="underHint">ИИ видит только отправленный фрагмент. Проверяй изменения в Roblox Studio.</p><button type="button" id="learnMore" data-ui="learnMore">Что умеет анализатор ↗</button></div>
+   </section>
+   <section id="pricing" class="pricing" hidden aria-labelledby="pricingTitle"><div class="eyebrow">MORE ROOM TO BUILD</div><h1 id="pricingTitle">Тарифы</h1><p id="pricingIntro"></p><div id="planCards" class="plan-grid"></div><p id="pricingNote" class="pricing-note"></p><button id="backToEditor" type="button" data-ui="back">← К анализатору</button></section>
   </main>
-
-  <footer data-i18n="footer">
-    Project Doctor · Помощник для проверки Luau
-  </footer>
-
-  <dialog id="aboutDialog" aria-labelledby="aboutTitle">
-    <h2 id="aboutTitle" data-i18n="about">Что проверяется</h2>
-    <p data-i18n="aboutText">
-      Проверяем синтаксис и типы с помощью Luau LSP и определений Roblox. 
-      Проверка не запускает игру и не знает объекты твоего проекта. 
-      Она не гарантирует отсутствие логических ошибок или уязвимостей.
-    </p>
-    <p data-i18n="translationInfo">
-      Перевод и советы доступны для знакомых сообщений. 
-      Для остальных сохраняется оригинал анализатора.
-    </p>
-    <p data-i18n="feedbackInfo">
-      Отзывы сохраняются на сервере: идентификатор правила, Да/Нет и язык. 
-      Исходный код в отзыв не входит.
-    </p>
-    <p data-i18n="version">
-      Интерфейс: MVP 0.2. Версия анализатора зависит от установленного luau-lsp.
-    </p>
-    <form method="dialog">
-      <button class="primary" data-i18n="close">Понятно</button>
-    </form>
-  </dialog>
-
-<dialog id="accountDialog" aria-labelledby="accountTitle">
- <button id="accountClose" class="account-close" type="button" aria-label="Закрыть">×</button>
- <h2 id="accountTitle">Аккаунт</h2>
- <div id="signedIn" hidden><p id="accountIdentity"></p><p id="accountInfo"></p><button id="logoutButton" type="button">Выйти</button></div>
- <form id="accountForm">
-  <label><span id="usernameLabel">Логин</span><input id="accountUsername" name="username" autocomplete="username" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" required></label>
-  <p id="usernameHint" class="muted small"></p>
-  <label><span id="passwordLabel">Пароль</span><input id="accountPassword" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="256" required></label>
-  <p id="passwordHint" class="muted small"></p>
-  <button id="accountSubmit" class="primary" type="submit">Войти</button>
-  <button id="accountSwitch" type="button">Создать аккаунт</button>
- </form>
- <p id="accountStatus" role="status" aria-live="polite"></p>
-</dialog>
-</body>
-</html>
+  <footer><span>Project Doctor <span class="muted">/</span> <span data-ui="independent">Независимый инструмент для Roblox</span></span><span id="visitorStats" class="muted small"></span></footer>
+ </div>
+ <dialog id="aboutDialog" aria-labelledby="aboutTitle"><div class="dialog-eyebrow">PROJECT DOCTOR</div><h2 id="aboutTitle" data-i18n="about">Что проверяется</h2><p data-i18n="aboutText"></p><p data-i18n="translationInfo"></p><p data-i18n="feedbackInfo"></p><p data-i18n="version"></p><form method="dialog"><button class="primary" data-i18n="close">Понятно</button></form></dialog>
+ <dialog id="accountDialog" aria-labelledby="accountTitle"><button id="accountClose" class="account-close" type="button" aria-label="Закрыть">×</button><div class="auth-symbol">✳</div><div class="dialog-eyebrow">PROJECT DOCTOR ACCOUNT</div><h2 id="accountTitle">С возвращением</h2><p id="authSubtitle" class="auth-subtitle">Твоё рабочее пространство начинается здесь.</p><div id="signedIn" hidden><div class="profile-avatar" id="profileAvatar">P</div><p id="accountIdentity"></p><p id="accountInfo"></p><button id="logoutButton" type="button">Выйти</button></div><div id="signedOut"><button id="googleButton" class="google-button" type="button" disabled><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.9h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15.1z"/><path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.6-5.1c-1.8 1.2-4.1 1.9-6.9 1.9-5.3 0-9.8-3.6-11.4-8.5H5.8v5.3A20.4 20.4 0 0 0 24 44z"/><path fill="#FBBC05" d="M12.6 27.4a12 12 0 0 1 0-7.8v-5.3H5.8a20 20 0 0 0 0 18.4z"/><path fill="#EA4335" d="M24 11.1c3 0 5.7 1 7.8 3l5.8-5.8A19.7 19.7 0 0 0 24 3a20.4 20.4 0 0 0-18.2 11.3l6.8 5.3c1.6-4.9 6.1-8.5 11.4-8.5z"/></svg><span id="googleButtonText">Продолжить с Google</span></button><p id="googleStatus" class="muted small"></p><div class="auth-divider"><span data-ui="or">или по логину</span></div><form id="accountForm"><label><span id="usernameLabel">Логин</span><input id="accountUsername" name="username" autocomplete="username" pattern="[A-Za-z0-9_]{3,24}" minlength="3" maxlength="24" placeholder="your_name" required></label><p id="usernameHint" class="muted small"></p><label><span id="passwordLabel">Пароль</span><input id="accountPassword" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="256" placeholder="••••••••••••" required></label><p id="passwordHint" class="muted small"></p><button id="accountSubmit" class="primary" type="submit">Войти</button><button id="accountSwitch" type="button">Создать аккаунт</button></form></div><p id="accountStatus" role="status" aria-live="polite"></p></dialog>
+</body></html>

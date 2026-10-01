@@ -7,18 +7,18 @@ const texts = {
 function readSetting(key, fallback) { try { return localStorage.getItem(key) || fallback; } catch { return fallback; } }
 function saveSetting(key, value) { try { localStorage.setItem(key, value); } catch { /* Settings remain usable for this visit. */ } }
 let language = readSetting('doctor-language','ru') === 'en' ? 'en' : 'ru';
-let theme = readSetting('doctor-theme','dark') === 'light' ? 'light' : 'dark';
+let theme = readSetting('doctor-theme','light') === 'light' ? 'light' : 'dark';
 let busy = false, result = null, analyzedCode = '', elapsed = null, status = 'idle';
 let feedback = new Map();
 let aiResult = null;
 const aiToggle = document.createElement('input');
 aiToggle.type='checkbox'; aiToggle.id='enableAI';
 const aiLabel=document.createElement('label');
-aiLabel.style.cssText='display:flex;gap:10px;align-items:center;margin:12px 20px;';
+aiLabel.id='aiToggleLabel';
 aiLabel.append(aiToggle);
 const aiLabelText=document.createElement('span'); aiLabelText.id='aiLabelText';aiLabel.append(aiLabelText);
-const aiDisclosure=document.createElement('p');aiDisclosure.id='aiDisclosure';aiDisclosure.className='muted small';aiDisclosure.style.margin='0 20px 12px';
-$('analyzeButton').parentElement.before(aiLabel,aiDisclosure);
+const aiDisclosure=document.createElement('p');aiDisclosure.id='aiDisclosure';aiDisclosure.className='muted small';
+$('analysisOptions').append(aiLabel,aiDisclosure);
 aiToggle.addEventListener('change',()=>{if(!busy && !result){aiResult=null;renderAI();}});
 const t = key => texts[language][key];
 function element(tag, text, className) { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (className) node.className = className; return node; }
@@ -42,6 +42,8 @@ function renderStatus() {
   $('issuesList').setAttribute('aria-busy',String(busy));
   $('lineCount').textContent = t('lines') + $('codeInput').value.split('\n').length;
   $('staleNotice').hidden = !result || $('codeInput').value === analyzedCode;
+  $('emptyResults').hidden = status !== 'idle';
+  document.dispatchEvent(new Event('doctor:editor-update'));
 }
 function jumpToLine(line) {
   if ($('codeInput').value !== analyzedCode) return;
@@ -89,7 +91,7 @@ function translate() {
   $('aiDisclosure').textContent=language==='ru'?'При включении код отправляется Groq. ИИ может ошибаться.':'When enabled, code is sent to Groq. AI can make mistakes.';
   document.documentElement.lang=language; document.documentElement.dataset.theme=theme;
   $('languageSelect').value=language; $('themeSelect').value=theme;
-  document.querySelectorAll('[data-i18n]').forEach(node=>node.textContent=t(node.dataset.i18n));
+  document.querySelectorAll('[data-i18n]').forEach(node=>{const value=t(node.dataset.i18n);if(value!==undefined)node.textContent=value;});
   renderStatus(); renderIssues();
 }
 $('languageSelect').addEventListener('change',()=>{language=$('languageSelect').value;saveSetting('doctor-language',language);translate();});
@@ -132,7 +134,7 @@ $('userForm').addEventListener('submit',async event=>{
 });
 function renderAI(){
   let panel=$('doctorAI');
-  if(!panel){panel=element('section',undefined,'issue');panel.id='doctorAI';panel.style.margin='18px';panel.setAttribute('aria-labelledby','doctorAITitle');$('analysisResult').before(panel);}
+  if(!panel){panel=element('section',undefined,'issue');panel.id='doctorAI';panel.style.margin='18px';panel.setAttribute('aria-labelledby','doctorAITitle');$('issuesList').before(panel);}
   panel.replaceChildren();panel.hidden=!aiResult;
   if(!aiResult)return;
   const ru=language==='ru';const title=element('h3',ru?'От ИИ':'AI review');title.id='doctorAITitle';panel.append(title);

@@ -5,6 +5,7 @@
     "type": "module",
     "dependencies": {
         "express": "^5.2.1",
+        "google-auth-library": "^11.1.0",
         "luau-lsp": "^1.0.0",
         "pg": "^8.23.0"
     }
