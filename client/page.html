@@ -54,6 +54,25 @@
    <section id="pricing" class="pricing" hidden aria-labelledby="pricingTitle"><div class="eyebrow">MORE ROOM TO BUILD</div><h1 id="pricingTitle">Тарифы</h1><p id="pricingIntro"></p><div id="planCards" class="plan-grid"></div><p id="pricingNote" class="pricing-note"></p><button id="backToEditor" type="button" data-ui="back">← К анализатору</button></section>
   </main>
   <footer><span>Project Doctor <span class="muted">/</span> <span data-ui="independent">Независимый инструмент для Roblox</span></span><span id="visitorStats" class="muted small"></span></footer>
+  <section aria-label="Документы сервиса"
+  style="margin:20px 16px;padding:20px;background:#fff;color:#24362e;border:1px solid #c9d9ce;border-radius:12px">
+
+  <strong style="display:block;margin-bottom:12px">
+    Документы сервиса
+  </strong>
+
+  <nav style="display:flex;gap:12px;flex-wrap:wrap">
+    <a href="/offer.html"
+      style="padding:12px 16px;background:#f0f7f2;color:#175c3c;border:1px solid #287d57;border-radius:8px;text-decoration:underline">
+      Публичная оферта
+    </a>
+
+    <a href="/privacy.html"
+      style="padding:12px 16px;background:#f0f7f2;color:#175c3c;border:1px solid #287d57;border-radius:8px;text-decoration:underline">
+      Политика конфиденциальности
+    </a>
+  </nav>
+</section>
  </div>
  <dialog id="aboutDialog" aria-labelledby="aboutTitle"><div class="dialog-eyebrow">PROJECT DOCTOR</div><h2 id="aboutTitle" data-i18n="about">Что проверяется</h2><p data-i18n="aboutText"></p><p data-i18n="translationInfo"></p><p data-i18n="feedbackInfo"></p><p data-i18n="version"></p><form method="dialog"><button class="primary" data-i18n="close">Понятно</button></form></dialog>
  <dialog id="settingsDialog" aria-labelledby="settingsTitle"><button id="settingsClose" class="account-close" type="button" aria-label="Закрыть">×</button><div class="dialog-eyebrow">PROJECT DOCTOR CUSTOMIZATION</div><h2 id="settingsTitle">Настройки темы</h2><p class="settings-lead">Сделай рабочее пространство таким, как тебе удобно. Настройки сохраняются в этом браузере.</p><div class="settings-grid"><label>Готовая тема<select id="themePreset"><option value="default">Мята</option><option value="ocean">Океан</option><option value="sunset">Закат</option><option value="mono">Монохром</option><option value="custom">Своя тема</option></select></label><label>Цвет акцента<input id="accentColor" type="color" value="#287d57"></label><label>Цвет фона<input id="backgroundColor" type="color" value="#f6f6f2"></label><label class="settings-wide">Фоновая картинка<input id="backgroundFile" type="file" accept="image/png,image/jpeg,image/webp"></label><div class="settings-wide settings-file-row"><button id="clearBackground" type="button">Убрать картинку</button><span id="backgroundName" class="muted small">Картинка не выбрана</span></div><label>Прозрачность фона <output id="backgroundOpacityValue">18%</output><input id="backgroundOpacity" type="range" min="0" max="70" value="18"></label><label>Размытие картинки <output id="backgroundBlurValue">0px</output><input id="backgroundBlur" type="range" min="0" max="20" value="0"></label><label>Прозрачность панелей <output id="panelOpacityValue">100%</output><input id="panelOpacity" type="range" min="65" max="100" value="100"></label></div><div class="settings-actions"><button id="resetSettings" type="button">Сбросить</button><button id="settingsDone" class="primary" type="button">Готово</button></div></dialog>
