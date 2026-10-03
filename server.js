@@ -19,10 +19,16 @@ app.get('/googlec1c9a49b5baac5bc.html', (req, res) => {
 });
 
 // Отдача robots.txt напрямую, закрывая API и парсер от ботов
+// Отдача robots.txt с исключениями для авторизации
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain');
   res.send(
     "User-agent: *\n" +
+    // Разрешаем боту дергать ручки API, которые нужны для загрузки страницы
+    "Allow: /api/auth/config\n" +
+    "Allow: /api/auth/me\n" +
+    "Allow: /api/presence\n" +
+    // Все остальное скрытое и тяжелое API по-прежнему закрываем
     "Disallow: /api/\n" + 
     "Disallow: /analyzer/\n" + 
     "Allow: /page/\n" +
@@ -30,6 +36,7 @@ app.get('/robots.txt', (req, res) => {
     "Sitemap: https://onrender.com"
   );
 });
+
 // ======================================================
 
 // Настройки парсинга JSON и модулей
