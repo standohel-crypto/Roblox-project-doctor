@@ -43,3 +43,25 @@ app.use((error, req, res, next) => {
 });
 const port = Number(process.env.PORT) || 3005;
 app.listen(port, '0.0.0.0', () => console.log(`Сервер запущен на порту ${port}`));
+
+// === БЛОК ДЛЯ ИСПРАВЛЕНИЯ ОШИБОК GOOGLE SEARCH CONSOLE ===
+const path = require('path');
+
+// 1. Отдача файла подтверждения прав Google (чтобы не было ошибок 404/перегрузки)
+app.get('/googlec1c9a49b5baac5bc.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'googlec1c9a49b5baac5bc.html'));
+});
+
+// 2. Динамический роут для robots.txt, чтобы закрыть от роботов лишний мусор
+app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send(
+        "User-agent: *\n" +
+        "Disallow: /api/\n" + 
+        "Disallow: /analyzer/\n" + 
+        "Allow: /page/\n" +
+        "\n" +
+        "Sitemap: https://onrender.com"
+    );
+});
+// ========================================================
